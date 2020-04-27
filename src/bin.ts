@@ -25,6 +25,7 @@ import isCI from 'is-ci';
 import { getS3WebsiteDomainUrl, withoutLeadingSlash } from './util';
 import { AsyncFunction, asyncify, parallelLimit } from 'async';
 import proxy from 'proxy-agent';
+import deepmerge from 'deepmerge';
 
 const cli = yargs();
 const pe = new PrettyError();
@@ -65,10 +66,7 @@ const getParams = (path: string, params: Params): Partial<S3.Types.PutObjectRequ
     let returned = {};
     for (const key of Object.keys(params)) {
         if (minimatch(path, key)) {
-            returned = {
-                ...returned,
-                ...params[key],
-            };
+            returned = deepmerge(returned, params[key]);
         }
     }
 
